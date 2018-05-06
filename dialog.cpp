@@ -14,11 +14,24 @@ Dialog::Dialog(QWidget *parent) :QDialog(parent),ui(new Ui::Dialog)
     connect(_sok, SIGNAL(connected()), this, SLOT(onSokConnected()));
     connect(_sok, SIGNAL(disconnected()), this, SLOT(onSokDisconnected()));
     connect(_sok, SIGNAL(error(QAbstractSocket::SocketError)),this, SLOT(onSokDisplayError(QAbstractSocket::SocketError)));
+
+    herTits = new trillianTits(this, this);
 }
 
 Dialog::~Dialog()
 {
+    delete herTits;
     delete ui;
+}
+
+void Dialog::logMe(QString log)
+{
+    ui->lwLog->addItem(log);
+}
+
+void Dialog::logJoy(int axisX, int axisY)
+{
+    ui->lblPad->setText(QString::number(axisX)+" "+QString::number(axisY));
 }
 
 void Dialog::onSokDisplayError(QAbstractSocket::SocketError socketError)

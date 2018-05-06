@@ -14,10 +14,14 @@ TEMPLATE = app
 
 SOURCES += \
         main.cpp \
-        dialog.cpp
+        dialog.cpp \
+    trilliantits.cpp
 
 HEADERS += \
-        dialog.h
+        dialog.h \
+    trilliantits.h
 
 FORMS += \
         dialog.ui
+
+LIBS += -lSDL

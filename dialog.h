@@ -6,7 +6,10 @@
 #include <QHostAddress>
 #include "../marvin/trillianbody.h"
 #include <QMessageBox>
+#include "trilliantits.h"
+
 class trillianBody;
+class trillianTits;
 
 namespace Ui {
     class Dialog;
@@ -18,6 +21,8 @@ class Dialog : public QDialog
 
 public:
     explicit Dialog(QWidget *parent = 0);
+    void logMe(QString log);
+    void logJoy(int axisX, int axisY);
     ~Dialog();
 
 private slots:
@@ -37,7 +42,7 @@ private:
     quint16 _blockSize;
     QString _name;
     void AddToLog(QString text, QColor color = Qt::black);
-
+    trillianTits *herTits;
 };
 
 #endif // DIALOG_H
