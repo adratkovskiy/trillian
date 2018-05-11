@@ -23,6 +23,8 @@ public:
     explicit Dialog(QWidget *parent = 0);
     void logMe(QString log);
     void logJoy(int axisX, int axisY);
+    void logJoyButtons(QString butt);
+    void sendCommand(QString cmd);
     ~Dialog();
 
 private slots:

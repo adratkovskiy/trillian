@@ -34,6 +34,10 @@ void Dialog::logJoy(int axisX, int axisY)
     ui->lblPad->setText(QString::number(axisX)+" "+QString::number(axisY));
 }
 
+void Dialog::logJoyButtons(QString butt)
+{
+    ui->lblButtons->setText(butt);
+}
 void Dialog::onSokDisplayError(QAbstractSocket::SocketError socketError)
 {
     switch (socketError) {
@@ -235,4 +239,16 @@ void Dialog::AddToLog(QString text, QColor color)
 {
     ui->lwLog->insertItem(0, QTime::currentTime().toString()+" "+text);
     ui->lwLog->item(0)->setTextColor(color);
+}
+
+void Dialog::sendCommand(QString cmd)
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out << (quint16)0;
+    out << (quint8)trillianBody::comMessageToAll;
+    out << cmd;
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    _sok->write(block);
 }
