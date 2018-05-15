@@ -25,6 +25,7 @@ private:
     QTimer *tTimer;
     SDL_Joystick *joy;
     SDL_Event event;
+    int upd = 0;
 
 private slots:
     void updateTime();

@@ -16,6 +16,7 @@ Dialog::Dialog(QWidget *parent) :QDialog(parent),ui(new Ui::Dialog)
     connect(_sok, SIGNAL(error(QAbstractSocket::SocketError)),this, SLOT(onSokDisplayError(QAbstractSocket::SocketError)));
 
     herTits = new trillianTits(this, this);
+    udpSock = new udp(this, this, 1235);
 }
 
 Dialog::~Dialog()
@@ -243,12 +244,13 @@ void Dialog::AddToLog(QString text, QColor color)
 
 void Dialog::sendCommand(QString cmd)
 {
-    QByteArray block;
+    udpSock->sendMess(cmd);
+    /*QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out << (quint16)0;
     out << (quint8)trillianBody::comMessageToAll;
     out << cmd;
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
-    _sok->write(block);
+    _sok->write(block);*/
 }

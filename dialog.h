@@ -7,9 +7,12 @@
 #include "../marvin/trillianbody.h"
 #include <QMessageBox>
 #include "trilliantits.h"
+#include <QUdpSocket>
+#include "udp.h"
 
 class trillianBody;
 class trillianTits;
+class udp;
 
 namespace Ui {
     class Dialog;
@@ -45,6 +48,8 @@ private:
     QString _name;
     void AddToLog(QString text, QColor color = Qt::black);
     trillianTits *herTits;
+    udp *udpSock;
+
 };
 
 #endif // DIALOG_H

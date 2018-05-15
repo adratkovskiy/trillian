@@ -15,11 +15,13 @@ TEMPLATE = app
 SOURCES += \
         main.cpp \
         dialog.cpp \
-    trilliantits.cpp
+    trilliantits.cpp \
+    udp.cpp
 
 HEADERS += \
         dialog.h \
-    trilliantits.h
+    trilliantits.h \
+    udp.h
 
 FORMS += \
         dialog.ui

@@ -6,7 +6,7 @@ trillianTits::trillianTits(QObject *parent, Dialog *dia) : QObject(parent)
     ui = dia;
     dia->logMe("logging connected");
     tTimer = new QTimer(this);
-    tTimer->setInterval(100);
+    tTimer->setInterval(50);
     connect(tTimer, SIGNAL(timeout()), this, SLOT(updateTime()));
     tTimer->start();
     // Инициализация SDL для использования джойстика
@@ -24,15 +24,9 @@ trillianTits::~trillianTits()
 
 void trillianTits::updateTime() {
     SDL_PollEvent(&event);
-
-    // Получаем значения, соответствующие смещению джойстика
-    // по оси Х
     int xAxis = SDL_JoystickGetAxis(joy, 0);
-    // по оси Y
     int yAxis = SDL_JoystickGetAxis(joy, 1);
-
-    ui->logJoy(xAxis, yAxis);
-    QString buttons = "";
+    QString buttons = QString::number(floor(xAxis / 3300)) + QString::number(floor(yAxis / 3300));
     buttons.append(QString::number(SDL_JoystickGetButton(joy, 0)));
     buttons.append(QString::number(SDL_JoystickGetButton(joy, 1)));
     buttons.append(QString::number(SDL_JoystickGetButton(joy, 2)));
@@ -46,6 +40,13 @@ void trillianTits::updateTime() {
     buttons.append(QString::number(SDL_JoystickGetButton(joy, 10)));
     buttons.append(QString::number(SDL_JoystickGetButton(joy, 11)));
     buttons.append(QString::number(SDL_JoystickGetButton(joy, 12)));
+    if (upd < 10) {
+        upd++;
+    }
+    else {
+        upd = 0;
+    }
+    buttons.append(QString::number(upd));
     ui->logJoyButtons(buttons);
-    ui->sendCommand("cmd#bb"+buttons);
+    ui->sendCommand("cmd#js"+buttons);
 }
