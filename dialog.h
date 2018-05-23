@@ -28,6 +28,7 @@ public:
     void logJoy(int axisX, int axisY);
     void logJoyButtons(QString butt);
     void sendCommand(QString cmd);
+    QString getIpTarget();
     ~Dialog();
 
 private slots:

@@ -23,7 +23,8 @@ public slots:
 private:
     Dialog *ui;
     QTimer *tTimer;
-    SDL_Joystick *joy;
+    SDL_Joystick *joy_left;
+    SDL_Joystick *joy_right;
     SDL_Event event;
     int upd = 0;
 

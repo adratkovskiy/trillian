@@ -16,7 +16,7 @@ Dialog::Dialog(QWidget *parent) :QDialog(parent),ui(new Ui::Dialog)
     connect(_sok, SIGNAL(error(QAbstractSocket::SocketError)),this, SLOT(onSokDisplayError(QAbstractSocket::SocketError)));
 
     herTits = new trillianTits(this, this);
-    udpSock = new udp(this, this, 1235);
+    udpSock = new udp(this, this, 1201);
 }
 
 Dialog::~Dialog()
@@ -240,6 +240,11 @@ void Dialog::AddToLog(QString text, QColor color)
 {
     ui->lwLog->insertItem(0, QTime::currentTime().toString()+" "+text);
     ui->lwLog->item(0)->setTextColor(color);
+}
+
+QString Dialog::getIpTarget()
+{
+    return ui->leHost->text();
 }
 
 void Dialog::sendCommand(QString cmd)
