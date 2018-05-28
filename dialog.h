@@ -39,7 +39,6 @@ private slots:
 
     void on_pbConnect_clicked();
     void on_pbDisconnect_clicked();
-    void on_cbToAll_clicked();
     void on_pbSend_clicked();
 
 private:

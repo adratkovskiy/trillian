@@ -16,7 +16,7 @@ Dialog::Dialog(QWidget *parent) :QDialog(parent),ui(new Ui::Dialog)
     connect(_sok, SIGNAL(error(QAbstractSocket::SocketError)),this, SLOT(onSokDisplayError(QAbstractSocket::SocketError)));
 
     herTits = new trillianTits(this, this);
-    udpSock = new udp(this, this, 1201);
+    udpSock = new udp(this, this, ui->sbPort->text().toInt(), ui->leHost->text());
 }
 
 Dialog::~Dialog()
@@ -77,93 +77,6 @@ void Dialog::onSokReadyRead()
     quint8 command;
     in >> command;
     qDebug() << "Received command " << command;
-
-    switch (command)
-    {
-        case trillianBody::comAutchSuccess:
-        {
-            ui->pbSend->setEnabled(true);
-            AddToLog("Enter as "+_name,Qt::green);
-        }
-        break;
-        case trillianBody::comUsersOnline:
-        {
-            AddToLog("Received user list "+_name,Qt::green);
-            ui->pbSend->setEnabled(true);
-            QString users;
-            in >> users;
-            if (users == "")
-                return;
-            QStringList l =  users.split(",");
-            ui->lwUsers->addItems(l);
-        }
-        break;
-        case trillianBody::comPublicServerMessage:
-        {
-            QString message;
-            in >> message;
-            AddToLog("[PublicServerMessage]: "+message, Qt::red);
-        }
-        break;
-        case trillianBody::comMessageToAll:
-        {
-            QString user;
-            in >> user;
-            QString message;
-            in >> message;
-            AddToLog("["+user+"]: "+message);
-        }
-        break;
-        case trillianBody::comMessageToUsers:
-        {
-            QString user;
-            in >> user;
-            QString message;
-            in >> message;
-            AddToLog("["+user+"](private): "+message, Qt::blue);
-        }
-        break;
-        case trillianBody::comPrivateServerMessage:
-        {
-            QString message;
-            in >> message;
-            AddToLog("[PrivateServerMessage]: "+message, Qt::red);
-        }
-        break;
-        case trillianBody::comUserJoin:
-        {
-            QString name;
-            in >> name;
-            ui->lwUsers->addItem(name);
-            AddToLog(name+" joined", Qt::green);
-        }
-        break;
-        case trillianBody::comUserLeft:
-        {
-            QString name;
-            in >> name;
-            for (int i = 0; i < ui->lwUsers->count(); ++i)
-                if (ui->lwUsers->item(i)->text() == name)
-                {
-                    ui->lwUsers->takeItem(i);
-                    AddToLog(name+" left", Qt::green);
-                    break;
-                }
-        }
-        break;
-        case trillianBody::comErrNameInvalid:
-        {
-            QMessageBox::information(this, "Error", "This name is invalid.");
-            _sok->disconnectFromHost();
-        }
-        break;
-        case trillianBody::comErrNameUsed:
-        {
-            QMessageBox::information(this, "Error", "This name is already used.");
-            _sok->disconnectFromHost();
-        }
-        break;
-    }
 }
 
 void Dialog::onSokConnected()
@@ -178,8 +91,6 @@ void Dialog::onSokConnected()
     QDataStream out(&block, QIODevice::WriteOnly);
     out << (quint16)0;
     out << (quint8)trillianBody::comAutchReq;
-    out << ui->leName->text();
-    _name = ui->leName->text();
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
     _sok->write(block);
@@ -190,26 +101,20 @@ void Dialog::onSokDisconnected()
     ui->pbConnect->setEnabled(true);
     ui->pbDisconnect->setEnabled(false);
     ui->pbSend->setEnabled(false);
-    ui->lwUsers->clear();
     AddToLog("Disconnected from"+_sok->peerAddress().toString()+":"+QString::number(_sok->peerPort()), Qt::green);
 }
 
 void Dialog::on_pbConnect_clicked()
 {
-    _sok->connectToHost(ui->leHost->text(), ui->sbPort->value());
+    //_sok->connectToHost(ui->leHost->text(), ui->sbPort->value());
+    udpSock->setHostPort(ui->leHost->text(), ui->sbPort->text().toInt());
+    udpSock->accessToSend(true);
 }
 
 void Dialog::on_pbDisconnect_clicked()
 {
-    _sok->disconnectFromHost();
-}
-
-void Dialog::on_cbToAll_clicked()
-{
-    if (ui->cbToAll->isChecked())
-        ui->pbSend->setText("Send To All");
-    else
-        ui->pbSend->setText("Send To Selected");
+    //_sok->disconnectFromHost();
+    udpSock->accessToSend(false);
 }
 
 void Dialog::on_pbSend_clicked()
@@ -217,18 +122,7 @@ void Dialog::on_pbSend_clicked()
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out << (quint16)0;
-    if (ui->cbToAll->isChecked())
-        out << (quint8)trillianBody::comMessageToAll;
-    else
-    {
-        out << (quint8)trillianBody::comMessageToUsers;
-        QString s;
-        foreach (QListWidgetItem *i, ui->lwUsers->selectedItems())
-            s += i->text()+",";
-        s.remove(s.length()-1, 1);
-        out << s;
-    }
-
+    out << (quint8)trillianBody::comMessageToAll;
     out << ui->pteMessage->document()->toPlainText();
     out.device()->seek(0);
     out << (quint16)(block.size() - sizeof(quint16));
@@ -259,3 +153,4 @@ void Dialog::sendCommand(QString cmd)
     out << (quint16)(block.size() - sizeof(quint16));
     _sok->write(block);*/
 }
+
